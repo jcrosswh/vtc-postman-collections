@@ -1,0 +1,414 @@
+{
+	"info": {
+		"_postman_id": "2328ccb7-f4bb-450c-973a-05ea97597923",
+		"name": "Visa Developer VTC",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register card",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c95be96b-2aa2-4e72-bac0-c4d739c70373",
+						"exec": [
+							"let jsonData = pm.response.json();",
+							"pm.environment.set(\"ctcDocId\", jsonData.resource.documentID);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"primaryAccountNumber\": \"{{panPrefix}}0001\"\n}\n"
+				},
+				"url": {
+					"raw": "{{vtcUrl}}/customerrules/v1/consumertransactioncontrols",
+					"host": [
+						"{{vtcUrl}}"
+					],
+					"path": [
+						"customerrules",
+						"v1",
+						"consumertransactioncontrols"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Configuring alerts delivery",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"countryCode\": \"USA\",\n  \"defaultAlertsPreferences\": [{\n      \"contactType\": \"Email\",\n      \"contactValue\": \"{{email}}\",\n      \"isVerified\": true,\n      \"status\": \"Active\",\n      \"preferredEmailFormat\": \"Html\"\n    }\n  ],\n  \"firstName\": \"{{firstName}}\",\n  \"lastName\": \"{{lastName}}\",\n  \"preferredLanguage\": \"en-us\",\n  \"primaryAccountNumber\": \"{{panPrefix}}0001\",\n  \"userIdentifier\": \"{{userId}}\"\n}\n"
+				},
+				"url": {
+					"raw": "{{vtcUrl}}/customerrules/v1/consumertransactioncontrols/customer",
+					"host": [
+						"{{vtcUrl}}"
+					],
+					"path": [
+						"customerrules",
+						"v1",
+						"consumertransactioncontrols",
+						"customer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Turn off card by setting rules",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"globalControls\": [{\n\t\t\t\"shouldDeclineAll\": true,\n\t\t\t\"shouldAlertOnDecline\": false,\n\t\t\t\"isControlEnabled\": true\n\t\t}\n\t]\n}\n"
+				},
+				"url": {
+					"raw": "{{vtcUrl}}/customerrules/v1/consumertransactioncontrols/{{ctcDocId}}/rules",
+					"host": [
+						"{{vtcUrl}}"
+					],
+					"path": [
+						"customerrules",
+						"v1",
+						"consumertransactioncontrols",
+						"{{ctcDocId}}",
+						"rules"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set alert conditions on card",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"globalControls\": [{\n      \"isControlEnabled\": true,\n      \"shouldDeclineAll\": false,\n      \"shouldAlertOnDecline\": true,\n      \"alertThreshold\": 500,\n      \"userIdentifier\": \"{{userId}}\"\n    }\n  ],\n  \"transactionControls\": [{\n      \"controlType\": \"TCT_BRICK_AND_MORTAR\",\n      \"isControlEnabled\": true,\n      \"shouldDeclineAll\": false,\n      \"shouldAlertOnDecline\": true,\n      \"alertThreshold\": 100,\n      \"userIdentifier\": \"{{userId}}\"\n    }, {\n      \"controlType\": \"TCT_E_COMMERCE\",\n      \"isControlEnabled\": true,\n      \"shouldDeclineAll\": false,\n      \"shouldAlertOnDecline\": true,\n      \"alertThreshold\": 50,\n      \"userIdentifier\": \"{{userId}}\"\n    }, {\n      \"controlType\": \"TCT_CROSS_BORDER\",\n      \"isControlEnabled\": true,\n      \"shouldDeclineAll\": true,\n      \"shouldAlertOnDecline\": true,\n      \"userIdentifier\": \"{{userId}}\"\n    }, {\n      \"controlType\": \"TCT_CONTACTLESS\",\n      \"isControlEnabled\": true,\n      \"shouldDeclineAll\": false,\n      \"shouldAlertOnDecline\": true,\n      \"alertThreshold\": 200,\n      \"userIdentifier\": \"{{userId}}\"\n    }\n  ]\n}\n"
+				},
+				"url": {
+					"raw": "{{vtcUrl}}/customerrules/v1/consumertransactioncontrols/{{ctcDocId}}/rules",
+					"host": [
+						"{{vtcUrl}}"
+					],
+					"path": [
+						"customerrules",
+						"v1",
+						"consumertransactioncontrols",
+						"{{ctcDocId}}",
+						"rules"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Perform a cross border transaction",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c2bcd4e4-6c34-4cb6-ba75-d49cf555d72d",
+						"exec": [
+							"timestamp = new Date();",
+							"month = String(timestamp.getUTCMonth() + 1).padStart(2, '0');",
+							"day = String(timestamp.getUTCDate()).padStart(2, '0');",
+							"hour = String(timestamp.getUTCHours()).padStart(2, '0');",
+							"minute = String(timestamp.getUTCMinutes()).padStart(2, '0');",
+							"second = String(timestamp.getUTCSeconds()).padStart(2, '0');",
+							"pm.environment.set(\"dateTimeLocal\", month + day + hour + minute + second);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "282c6598-5d13-499b-85fe-03a4b83b0383",
+						"exec": [
+							"let jsonData = pm.response.json();",
+							"pm.environment.set(\"decisionId\", jsonData.resource.decisionID);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"primaryAccountNumber\": \"{{panPrefix}}0001\",\n  \"decisionType\": \"COMPLETE\",\n  \"cardholderBillAmount\": 50,\n  \"merchantInfo\": {\n    \"addressLines\": [\"221B Baker St\"],\n    \"cardAcceptorTerminalID\": \"1\",\n    \"city\": \"London\",\n    \"countryCode\": \"GBR\",\n    \"currencyCode\": \"826\",\n    \"merchantCategoryCode\": \"5813\",\n    \"name\": \"Holmes Detective Agency\",\n    \"transactionAmount\": 100\n  },\n  \"messageType\": \"0100\",\n  \"pointOfServiceInfo\": {\n    \"personalIdentificationNumberEntryMode\": \"UNKNOWN\",\n    \"presentationData\": {\n      \"howPresented\": \"CUSTOMER_PRESENT\",\n      \"isCardPresent\": true\n    },\n    \"primaryAccountNumberEntryMode\": \"MAG_STRIPE_READ\",\n    \"securityCondition\": \"NO_SECURITY_CONCERN\",\n    \"terminalClass\": {\n      \"deviceLocation\": \"ON_PREMISE\",\n      \"howOperated\": \"CUSTOMER_OPERATED\",\n      \"isAttended\": true\n    },\n    \"terminalEntryCapability\": \"MAG_STRIPE_READ\",\n    \"terminalType\": \"POS_TERMINAL\"\n  },\n  \"processingCode\": \"000000\",\n  \"retrievalReferenceNumber\": \"R00000001\",\n  \"dateTimeLocal\": \"{{dateTimeLocal}}\"\n}\n"
+				},
+				"url": {
+					"raw": "{{vtcUrl}}/validation/v1/decisions",
+					"host": [
+						"{{vtcUrl}}"
+					],
+					"path": [
+						"validation",
+						"v1",
+						"decisions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Perform a brick and mortar transaction",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c2bcd4e4-6c34-4cb6-ba75-d49cf555d72d",
+						"exec": [
+							"timestamp = new Date();",
+							"month = String(timestamp.getUTCMonth() + 1).padStart(2, '0');",
+							"day = String(timestamp.getUTCDate()).padStart(2, '0');",
+							"hour = String(timestamp.getUTCHours()).padStart(2, '0');",
+							"minute = String(timestamp.getUTCMinutes()).padStart(2, '0');",
+							"second = String(timestamp.getUTCSeconds()).padStart(2, '0');",
+							"pm.environment.set(\"dateTimeLocal\", month + day + hour + minute + second);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "282c6598-5d13-499b-85fe-03a4b83b0383",
+						"exec": [
+							"let jsonData = pm.response.json();",
+							"pm.environment.set(\"decisionId\", jsonData.resource.decisionID);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"primaryAccountNumber\": \"{{panPrefix}}0001\",\n  \"decisionType\": \"COMPLETE\",\n  \"cardholderBillAmount\": 50,\n  \"merchantInfo\": {\n    \"addressLines\": [\"1600 Pennsylvania Ave\"],\n    \"cardAcceptorTerminalID\": \"1\",\n    \"city\": \"Washington\",\n    \"countryCode\": \"USA\",\n    \"currencyCode\": \"840\",\n    \"merchantCategoryCode\": \"5813\",\n    \"name\": \"White House Gift Shop\",\n    \"postalCode\": \"20500\",\n    \"region\": \"DC\",\n    \"transactionAmount\": 50\n  },\n  \"messageType\": \"0100\",\n  \"pointOfServiceInfo\": {\n    \"personalIdentificationNumberEntryMode\": \"UNKNOWN\",\n    \"presentationData\": {\n      \"howPresented\": \"CUSTOMER_PRESENT\",\n      \"isCardPresent\": true\n    },\n    \"primaryAccountNumberEntryMode\": \"MAG_STRIPE_READ\",\n    \"securityCondition\": \"NO_SECURITY_CONCERN\",\n    \"terminalClass\": {\n      \"deviceLocation\": \"ON_PREMISE\",\n      \"howOperated\": \"CUSTOMER_OPERATED\",\n      \"isAttended\": true\n    },\n    \"terminalEntryCapability\": \"MAG_STRIPE_READ\",\n    \"terminalType\": \"POS_TERMINAL\"\n  },\n  \"processingCode\": \"000000\",\n  \"retrievalReferenceNumber\": \"R00000001\",\n  \"dateTimeLocal\": \"{{dateTimeLocal}}\"\n}\n"
+				},
+				"url": {
+					"raw": "{{vtcUrl}}/validation/v1/decisions",
+					"host": [
+						"{{vtcUrl}}"
+					],
+					"path": [
+						"validation",
+						"v1",
+						"decisions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get alerts by account number",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c95be96b-2aa2-4e72-bac0-c4d739c70373",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "78164242-0ab2-40bb-b0fd-765932e70ced",
+						"exec": [
+							"currentDate = new Date();",
+							"currentDate.setDate(currentDate.getDate() - 1);",
+							"year = String(currentDate.getUTCFullYear());",
+							"month = String(currentDate.getUTCMonth() + 1).padStart(2, '0');",
+							"day = String(currentDate.getUTCDate()).padStart(2, '0');",
+							"hour = String(currentDate.getUTCHours()).padStart(2, '0');",
+							"minute = String(currentDate.getUTCMinutes()).padStart(2, '0');",
+							"second = String(currentDate.getUTCSeconds()).padStart(2, '0');",
+							"pm.environment.set(\"startTime\", year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second);",
+							"currentDate.setDate(currentDate.getDate() +2);",
+							"year = String(currentDate.getUTCFullYear());",
+							"month = String(currentDate.getUTCMonth() + 1).padStart(2, '0');",
+							"day = String(currentDate.getUTCDate()).padStart(2, '0');",
+							"hour = String(currentDate.getUTCHours()).padStart(2, '0');",
+							"minute = String(currentDate.getUTCMinutes()).padStart(2, '0');",
+							"second = String(currentDate.getUTCSeconds()).padStart(2, '0');",
+							"pm.environment.set(\"endTime\", year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"includeAlertDetails\": true,\n  \"includeContactDetails\": true,\n  \"includeMerchantDetails\": true,\n  \"pagination\": {\n    \"pageLimit\": \"10\",\n    \"startIndex\": \"1\"\n  },\n  \"primaryAccountNumber\": \"{{panPrefix}}0001\",\n  \"timeRange\": {\n    \"endTime\": \"{{endTime}}\",\n    \"startTime\": \"{{startTime}}\"\n  }\n}\n"
+				},
+				"url": {
+					"raw": "{{vtcUrl}}/customerrules/v1/consumertransactioncontrols/customer/notificationInquiry",
+					"host": [
+						"{{vtcUrl}}"
+					],
+					"path": [
+						"customerrules",
+						"v1",
+						"consumertransactioncontrols",
+						"customer",
+						"notificationInquiry"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete card from VTC",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c95be96b-2aa2-4e72-bac0-c4d739c70373",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "{{vtcUrl}}/customerrules/v1/consumertransactioncontrols/{{ctcDocId}}",
+					"host": [
+						"{{vtcUrl}}"
+					],
+					"path": [
+						"customerrules",
+						"v1",
+						"consumertransactioncontrols",
+						"{{ctcDocId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "qJZC82kx0Wpv32963kF08JHfTBts",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "K6B3UG9UR56IH3BW0KRH21s160XbCtZZmf2N8CB2BQtTtBgWQ",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "4ac1af8a-4cc1-4b15-87af-ac3bdd7f5c8e",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "0bbca9dd-51d1-4def-81ee-7b216753c222",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
