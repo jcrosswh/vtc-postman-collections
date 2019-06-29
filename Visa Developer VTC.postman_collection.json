@@ -374,21 +374,6 @@
 			"response": []
 		}
 	],
-	"auth": {
-		"type": "basic",
-		"basic": [
-			{
-				"key": "password",
-				"value": "qJZC82kx0Wpv32963kF08JHfTBts",
-				"type": "string"
-			},
-			{
-				"key": "username",
-				"value": "K6B3UG9UR56IH3BW0KRH21s160XbCtZZmf2N8CB2BQtTtBgWQ",
-				"type": "string"
-			}
-		]
-	},
 	"event": [
 		{
 			"listen": "prerequest",

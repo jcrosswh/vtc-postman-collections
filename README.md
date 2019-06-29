@@ -34,17 +34,19 @@ You should now see the **Visa Developer VTC** collection on the left had side Co
 
 **7.** Click the **eye** icon to the the right and then click **Edit**.
 
-**8.** Enter in to the **current** (not **initial**) variables your VTC application: **PAN Prefix (Obtained from 'Test Data' on VDP)**, **UserId**, **FirstName**, **LastName**, and **Email**.
+**8.** Enter in to the **current** (not **initial**) variables your VTC application: **PAN Prefix (Obtained from 'Test Data' on VDP)**, **UserId**, **FirstName**, **LastName**, and **Email**. Select **Update**. Close the **Manage Environments** dialog. 
 
-**9.** Select **Update**. Close the **Manage Environments** dialog. In the **VTC Sandbox environment** collection on left hand side, click on the **Register card** and click **Send** button on right hand side.  This call will give a document ID to associate to this card.  The document ID will be captured for you by the post call test.
+**9.** Enter your credentials for each request. On the **VTC Sandbox environment** collection, click on the ellipsis to see more actions and select **Edit**. Select the **Authorization** tab. Under **Type** choose **Basic Auth**. Enter your **Username** and **Password** that is obtained from **'Credentials' on VDP**.
 
-**10.** Setup your email delivery by clicking on **Configuring alerts delivery** and clicking the **Send** button.  This will register your email address with the provided user ID.
+**10.** In the **VTC Sandbox environment** collection on left hand side, click on the **Register card** and click **Send** button on right hand side.  This call will give a document ID to associate to this card.  The document ID will be captured for you by the post call test.
 
-**11.** Set rules on the card by sending either the **Turn off card by setting rules** call or the **Set alert conditions on card** call.  These rules will either always cause the card to be declined or set different alert conditions.
+**11.** Setup your email delivery by clicking on **Configuring alerts delivery** and clicking the **Send** button.  This will register your email address with the provided user ID.
 
-**12.** Run transactions on the card by sending in **Perform a cross border transaction** or **Perform a brick and mortar transaction** calls.
+**12.** Set rules on the card by sending either the **Turn off card by setting rules** call or the **Set alert conditions on card** call.  These rules will either always cause the card to be declined or set different alert conditions.
 
-**13.** You can view alerts that may have been sent by using the **Get alerts by account number** call.
+**13.** Run transactions on the card by sending in **Perform a cross border transaction** or **Perform a brick and mortar transaction** calls.
+
+**14.** You can view alerts that may have been sent by using the **Get alerts by account number** call.
 
 You are now up and running with VTC Postman collections.
 
